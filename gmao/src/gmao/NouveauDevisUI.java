@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,7 +13,8 @@ import java.util.Date;
 
 // Classe pour créer un nouveau devis
 public class NouveauDevisUI extends JFrame {
-
+	
+	private JTextField devisIdField;
     private JTextField demandeIdField;
     private JTextField operateurIdField;
     private JTextField montantField;
@@ -25,10 +27,12 @@ public class NouveauDevisUI extends JFrame {
 
         // Panel pour contenir les composants de la fenêtre
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 2)); // Disposition des composants en grille
+        panel.setLayout(new GridLayout(6, 2)); // Disposition des composants en grille
 
         // Champs de texte et étiquettes pour saisir les informations du devis
-        JLabel demandeIdLabel = new JLabel("ID de la Demande:");
+        JLabel demandeIdLabel = new JLabel("ID du devis:");
+        devisIdField = new JTextField();
+        JLabel devisIdLabel = new JLabel("ID de la Demande:");
         demandeIdField = new JTextField();
         JLabel operateurIdLabel = new JLabel("ID de l'Opérateur:");
         operateurIdField = new JTextField();
@@ -43,6 +47,7 @@ public class NouveauDevisUI extends JFrame {
         creerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	String devisId = devisIdField.getText();
                 String demandeId = demandeIdField.getText();
                 String operateurId = operateurIdField.getText();
                 String montant = montantField.getText();
@@ -52,13 +57,14 @@ public class NouveauDevisUI extends JFrame {
 
                 // Insertion du devis dans la base de données
                 try (Connection conn = DBUtil.getConnection()) {
-                    String query = "INSERT INTO Devis (demande_id, operateur_id, montant, statut, date_creation) VALUES (?, ?, ?, ?, ?)";
+                    String query = "INSERT INTO Devis (devis_id, demande_id, operateur_id, montant, statut, date_creation) VALUES (?, ?, ?, ?, ?,?)";
                     PreparedStatement statement = conn.prepareStatement(query);
-                    statement.setInt(1, Integer.parseInt(demandeId));
-                    statement.setInt(2, Integer.parseInt(operateurId));
-                    //statement.setBigDecimal(3, new BigDecimal(montant));
-                    statement.setString(4, statut);
-                    statement.setString(5, sdf.format(date));
+                    statement.setInt(1, Integer.parseInt(devisId));
+                    statement.setInt(2, Integer.parseInt(demandeId));
+                    statement.setInt(3, Integer.parseInt(operateurId));
+                    statement.setBigDecimal(4, new BigDecimal(montant));
+                    statement.setString(5, statut);
+                    statement.setString(6, sdf.format(date));
 
                     statement.executeUpdate();
 
@@ -69,6 +75,7 @@ public class NouveauDevisUI extends JFrame {
                             JOptionPane.INFORMATION_MESSAGE);
 
                     // Réinitialisation des champs après création
+                    devisIdField.setText("");
                     demandeIdField.setText("");
                     operateurIdField.setText("");
                     montantField.setText("");
@@ -83,6 +90,8 @@ public class NouveauDevisUI extends JFrame {
         });
 
         // Ajout des composants au panel
+        panel.add(devisIdLabel);
+        panel.add(devisIdField);
         panel.add(demandeIdLabel);
         panel.add(demandeIdField);
         panel.add(operateurIdLabel);
