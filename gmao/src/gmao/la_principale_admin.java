@@ -13,6 +13,8 @@ public class la_principale_admin extends JFrame {
     private DefaultTableModel clientsTableModel;
     private DefaultTableModel responsablesTableModel;
     private JPanel mainPanel;
+    private JButton btnModifier;
+    private JButton btnSupprimer;
 
     public la_principale_admin() {
         setTitle("GMAO Application (Admin)"); // Titre de la fenêtre principale
@@ -125,7 +127,18 @@ public class la_principale_admin extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
+        
+        //ajouter ls boutons supprimer et modifier
+        JPanel panelButtons = new JPanel();
+        btnModifier = new JButton("Modifier");
+        btnSupprimer = new JButton("Supprimer");
+        panelButtons.add(btnModifier);
+        panelButtons.add(btnSupprimer);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
+    
+    //Methode pour supprimer un client
+    //****************************
 
     // Méthode pour charger les responsables de maintenance depuis la base de données
     private void loadResponsables() {
@@ -169,6 +182,14 @@ public class la_principale_admin extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
+        
+      //ajouter ls boutons supprimer et modifier
+        JPanel panelButtons = new JPanel();
+        btnModifier = new JButton("Modifier");
+        btnSupprimer = new JButton("Supprimer");
+        panelButtons.add(btnModifier);
+        panelButtons.add(btnSupprimer);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
 
     // Méthode principale pour lancer l'application

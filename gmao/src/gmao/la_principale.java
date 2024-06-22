@@ -11,9 +11,13 @@ import java.util.Vector;
 // Classe principale de l'application avec un menu pour accéder aux différentes fonctionnalités
 public class la_principale extends JFrame {
 
+	private DefaultTableModel operateurTableModel;
     private DefaultTableModel demandesTableModel;
     private DefaultTableModel devisTableModel;
     private JPanel mainPanel;
+    private JButton btnModifier;
+    private JButton btnSupprimer;
+
 
     // Constructeur de la classe la_principale
     public la_principale() {
@@ -89,6 +93,15 @@ public class la_principale extends JFrame {
             }
         });
         operateurMenu.add(ajouterOperateurMenuItem);
+        
+        JMenuItem afficherOperateurMenuItem = new JMenuItem("Afficher les Opérateurs");
+        afficherOperateurMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadOperateur();
+            }
+        });
+        operateurMenu.add(afficherOperateurMenuItem);
         menuBar.add(operateurMenu);
 
         // Ajout de la barre de menu à la fenêtre
@@ -103,6 +116,58 @@ public class la_principale extends JFrame {
         setVisible(true);
     }
 
+    private void loadOperateur() {
+        // Nettoyer le contenu du panel principal avant d'ajouter la table
+        mainPanel.removeAll();
+
+        // Créer le modèle de tableau pour les responsables de maintenance
+        operateurTableModel = new DefaultTableModel();
+        operateurTableModel.addColumn("ID operateur");
+        operateurTableModel.addColumn("Nom");
+        operateurTableModel.addColumn("Prénom");
+        operateurTableModel.addColumn("Email");
+
+        // Table pour afficher les Operateurs
+        JTable operateurTable = new JTable(operateurTableModel);
+        JScrollPane scrollPane = new JScrollPane(operateurTable);
+        
+
+        // Charger les données depuis la base de données
+        try (Connection conn = DBUtil.getConnection()) {
+            String query = "SELECT * FROM Utilisateur WHERE role = 'Operateur'";
+            PreparedStatement statement = conn.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Ajouter les données au modèle de tableau
+            while (resultSet.next()) {
+                Vector<String> row = new Vector<>();
+                row.add(resultSet.getString("id_Utilisateur"));
+                row.add(resultSet.getString("nom"));
+                row.add(resultSet.getString("prenom"));
+                row.add(resultSet.getString("email"));
+                operateurTableModel.addRow(row);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors du chargement des responsables de maintenance",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Ajouter la table au panel principal
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.revalidate(); // Rafraîchir l'affichage
+        
+      //ajouter ls boutons supprimer et modifier
+        JPanel panelButtons = new JPanel();
+        btnModifier = new JButton("Modifier");
+        btnSupprimer = new JButton("Supprimer");
+        panelButtons.add(btnModifier);
+        panelButtons.add(btnSupprimer);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
+    }
+    
     // Méthode pour charger les demandes de maintenance depuis la base de données
     private void loadDemandes() {
         // Nettoyer le contenu du panel principal avant d'ajouter la table
@@ -151,6 +216,14 @@ public class la_principale extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
+        
+        //ajouter ls boutons supprimer et modifier
+        JPanel panelButtons = new JPanel();
+        btnModifier = new JButton("Modifier");
+        btnSupprimer = new JButton("Supprimer");
+        panelButtons.add(btnModifier);
+        panelButtons.add(btnSupprimer);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
 
     // Méthode pour charger les devis depuis la base de données
@@ -199,6 +272,14 @@ public class la_principale extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
+        
+        //ajouter ls boutons supprimer et modifier
+        JPanel panelButtons = new JPanel();
+        btnModifier = new JButton("Modifier");
+        btnSupprimer = new JButton("Supprimer");
+        panelButtons.add(btnModifier);
+        panelButtons.add(btnSupprimer);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
 
     // Méthode principale pour lancer l'application
