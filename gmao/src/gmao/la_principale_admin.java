@@ -44,6 +44,7 @@ public class la_principale_admin extends JFrame {
             }
         });
         clientMenu.add(afficherClientsMenuItem);
+
         menuBar.add(clientMenu);
 
         // Menu pour les responsables de maintenance
@@ -127,18 +128,71 @@ public class la_principale_admin extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
-        
-        //ajouter ls boutons supprimer et modifier
+
+        // Ajouter les boutons Modifier et Supprimer
         JPanel panelButtons = new JPanel();
         btnModifier = new JButton("Modifier");
         btnSupprimer = new JButton("Supprimer");
+
+        btnModifier.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = clientsTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String clientId = (String) clientsTableModel.getValueAt(selectedRow, 0);
+                    new UpdateClientUI(clientId); // Ouvre la fenêtre pour modifier le client sélectionné
+                } else {
+                    JOptionPane.showMessageDialog(la_principale_admin.this,
+                            "Veuillez sélectionner un client à modifier",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        btnSupprimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = clientsTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String clientId = (String) clientsTableModel.getValueAt(selectedRow, 0);
+                    int confirm = JOptionPane.showConfirmDialog(la_principale_admin.this,
+                            "Êtes-vous sûr de vouloir supprimer ce client?",
+                            "Confirmation",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        deleteClient(clientId);
+                        loadClients(); // Recharger la liste des clients après suppression
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(la_principale_admin.this,
+                            "Veuillez sélectionner un client à supprimer",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         panelButtons.add(btnModifier);
         panelButtons.add(btnSupprimer);
         mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
-    
-    //Methode pour supprimer un client
-    //****************************
+
+    // Méthode pour supprimer un client de la base de données
+    private void deleteClient(String clientId) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String query = "DELETE FROM Client WHERE id_Client = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, clientId);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la suppression du client",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     // Méthode pour charger les responsables de maintenance depuis la base de données
     private void loadResponsables() {
@@ -182,11 +236,14 @@ public class la_principale_admin extends JFrame {
         // Ajouter la table au panel principal
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
-        
-      //ajouter ls boutons supprimer et modifier
+
+        // Ajouter les boutons Modifier et Supprimer
         JPanel panelButtons = new JPanel();
         btnModifier = new JButton("Modifier");
         btnSupprimer = new JButton("Supprimer");
+
+        // Ajouter les actions pour les boutons Modifier et Supprimer
+
         panelButtons.add(btnModifier);
         panelButtons.add(btnSupprimer);
         mainPanel.add(panelButtons, BorderLayout.SOUTH);
