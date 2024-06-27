@@ -53,11 +53,11 @@ public class NouveauDevisUI extends JFrame {
                 String montant = montantField.getText();
                 String statut = (String) statutComboBox.getSelectedItem();
                 Date date = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
                 // Insertion du devis dans la base de données
                 try (Connection conn = DBUtil.getConnection()) {
-                    String query = "INSERT INTO Devis (devis_id, demande_id, operateur_id, montant, statut, date_creation) VALUES (?, ?, ?, ?, ?,?)";
+                    String query = "INSERT INTO Devis (id_Devis, demande_id, operateur_id, montant, statut, date_creation) VALUES (?, ?, ?, ?, ?,?)";
                     PreparedStatement statement = conn.prepareStatement(query);
                     statement.setInt(1, Integer.parseInt(devisId));
                     statement.setInt(2, Integer.parseInt(demandeId));

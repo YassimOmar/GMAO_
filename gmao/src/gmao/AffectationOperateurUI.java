@@ -13,8 +13,10 @@ import java.util.Date;
 // Classe pour affecter un opérateur à une demande de maintenance
 public class AffectationOperateurUI extends JFrame {
 
+	private JTextField idAffectationOperateurField;
     private JTextField demandeIdField;
     private JTextField operateurIdField;
+   
 
     // Constructeur de la classe AffectationOperateurUI
     public AffectationOperateurUI() {
@@ -24,9 +26,11 @@ public class AffectationOperateurUI extends JFrame {
 
         // Panel pour contenir les composants de la fenêtre
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2)); // Disposition des composants en grille
+        panel.setLayout(new GridLayout(5, 2)); // Disposition des composants en grille
 
         // Champs de texte et étiquettes pour saisir les informations de l'affectation
+        JLabel idAffectationOperateurLabel = new JLabel("numero d'affectation:");
+        idAffectationOperateurField = new JTextField();
         JLabel demandeIdLabel = new JLabel("ID de la Demande:");
         demandeIdField = new JTextField();
         JLabel operateurIdLabel = new JLabel("ID de l'Opérateur:");
@@ -37,18 +41,20 @@ public class AffectationOperateurUI extends JFrame {
         affecterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String idAffectationOperateur = idAffectationOperateurField.getText();
                 String demandeId = demandeIdField.getText();
                 String operateurId = operateurIdField.getText();
                 Date date = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
                 // Insertion de l'affectation dans la base de données
                 try (Connection conn = DBUtil.getConnection()) {
-                    String query = "INSERT INTO AffectationOperateur (demande_id, operateur_id, date_affectation) VALUES (?, ?, ?)";
+                    String query = "INSERT INTO AffectationOperateur (id_AffectationOperateur,demande_id, operateur_id, date_affectation) VALUES (?,?, ?, ?)";
                     PreparedStatement statement = conn.prepareStatement(query);
                     statement.setInt(1, Integer.parseInt(demandeId));
-                    statement.setInt(2, Integer.parseInt(operateurId));
-                    statement.setString(3, sdf.format(date));
+                    statement.setInt(2, Integer.parseInt(demandeId));
+                    statement.setInt(3, Integer.parseInt(operateurId));
+                    statement.setString(4, sdf.format(date));
 
                     statement.executeUpdate();
 
@@ -72,6 +78,8 @@ public class AffectationOperateurUI extends JFrame {
         });
 
         // Ajout des composants au panel
+        panel.add(idAffectationOperateurLabel);
+        panel.add(idAffectationOperateurField);
         panel.add(demandeIdLabel);
         panel.add(demandeIdField);
         panel.add(operateurIdLabel);

@@ -237,17 +237,71 @@ public class la_principale_admin extends JFrame {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.revalidate(); // Rafraîchir l'affichage
 
-        // Ajouter les boutons Modifier et Supprimer
+     // Ajouter les boutons Modifier et Supprimer pour les responsables de maintenance
         JPanel panelButtons = new JPanel();
         btnModifier = new JButton("Modifier");
         btnSupprimer = new JButton("Supprimer");
 
-        // Ajouter les actions pour les boutons Modifier et Supprimer
+        btnModifier.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = responsablesTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String responsableId = (String) responsablesTableModel.getValueAt(selectedRow, 0);
+                    new UpdateResponsableMaintenanceUI(responsableId); // Ouvre la fenêtre pour modifier le responsable sélectionné
+                } else {
+                    JOptionPane.showMessageDialog(la_principale_admin.this,
+                            "Veuillez sélectionner un responsable à modifier",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        btnSupprimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = responsablesTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String responsableId = (String) responsablesTableModel.getValueAt(selectedRow, 0);
+                    int confirm = JOptionPane.showConfirmDialog(la_principale_admin.this,
+                            "Êtes-vous sûr de vouloir supprimer ce responsable?",
+                            "Confirmation",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        deleteResponsable(responsableId);
+                        loadResponsables(); // Recharger la liste des responsables après suppression
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(la_principale_admin.this,
+                            "Veuillez sélectionner un responsable à supprimer",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         panelButtons.add(btnModifier);
         panelButtons.add(btnSupprimer);
         mainPanel.add(panelButtons, BorderLayout.SOUTH);
     }
+    
+ // Méthode pour supprimer un responsable de maintenance de la base de données
+    private void deleteResponsable(String responsableId) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String query = "DELETE FROM Utilisateur WHERE id_Utilisateur = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, responsableId);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la suppression du responsable de maintenance",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     // Méthode principale pour lancer l'application
     public static void main(String[] args) {
