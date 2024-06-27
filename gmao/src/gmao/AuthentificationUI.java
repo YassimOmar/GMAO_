@@ -15,21 +15,18 @@ public class AuthentificationUI extends JFrame {
     private JPasswordField passwordField;
 
     public AuthentificationUI() {
-        setTitle("Authentification"); // Titre de la fenêtre d'authentification
-        setSize(300, 150); // Taille de la fenêtre d'authentification
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Comportement de fermeture
+        setTitle("Authentification");
+        setSize(300, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Panel pour contenir les composants de la fenêtre d'authentification
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2)); // Disposition des composants en grille
+        panel.setLayout(new GridLayout(3, 2));
 
-        // Étiquettes et champs de texte pour saisir le nom d'utilisateur et le mot de passe
         JLabel usernameLabel = new JLabel("Nom d'utilisateur:");
         usernameField = new JTextField();
         JLabel passwordLabel = new JLabel("Mot de passe:");
         passwordField = new JPasswordField();
 
-        // Bouton de connexion
         JButton loginButton = new JButton("Connexion");
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -39,19 +36,25 @@ public class AuthentificationUI extends JFrame {
 
                 // Validation de l'authentification en vérifiant dans la base de données
                 if (validateUser(username, password)) {
-                    String role = getUserRole(username); // Récupérer le rôle de l'utilisateur
-                    dispose(); // Fermer la fenêtre d'authentification
+                    String role = getUserRole(username);
+                    dispose(); // Fermer la fenêtre d'authentification après connexion
 
-                    // Ouvrir la fenêtre appropriée en fonction du rôle
-                    if (role.equalsIgnoreCase("admin")) {
-                        launchAdminApplication();
-                    } else if (role.equalsIgnoreCase("responsable_de_maintenance")) {
-                        launchMainApplication();
-                    } else {
-                        JOptionPane.showMessageDialog(null,
-                                "Rôle non pris en charge!",
-                                "Erreur d'authentification",
-                                JOptionPane.ERROR_MESSAGE);
+                    // Redirection vers l'application appropriée en fonction du rôle
+                    switch (role) {
+                        case "admin":
+                            launchAdminApplication();
+                            break;
+                        case "responsable_de_maintenance":
+                            launchMaintenanceApplication();
+                            break;
+                        case "Operateur_de_maintenance": // Assurez-vous que le rôle exact correspond à celui dans la base de données
+                            launchOperatorApplication();
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null,
+                                    "Rôle non pris en charge!",
+                                    "Erreur d'authentification",
+                                    JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(AuthentificationUI.this,
@@ -65,21 +68,18 @@ public class AuthentificationUI extends JFrame {
             }
         });
 
-        // Ajout des composants au panel
         panel.add(usernameLabel);
         panel.add(usernameField);
         panel.add(passwordLabel);
         panel.add(passwordField);
-        panel.add(new JLabel()); // Placeholder pour l'espacement
+        panel.add(new JLabel());
         panel.add(loginButton);
 
-        // Ajout du panel à la fenêtre d'authentification
         add(panel);
-        setLocationRelativeTo(null); // Centrer la fenêtre d'authentification sur l'écran
-        setVisible(true); // Rendre la fenêtre d'authentification visible
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    // Méthode pour valider l'authentification en vérifiant dans la base de données
     private boolean validateUser(String username, String password) {
         try (Connection conn = DBUtil.getConnection()) {
             String query = "SELECT * FROM Utilisateur WHERE nom = ? AND mot_de_passe = ?";
@@ -101,7 +101,6 @@ public class AuthentificationUI extends JFrame {
         return false;
     }
 
-    // Méthode pour récupérer le rôle de l'utilisateur à partir de la base de données
     private String getUserRole(String username) {
         try (Connection conn = DBUtil.getConnection()) {
             String query = "SELECT role FROM Utilisateur WHERE nom = ?";
@@ -124,18 +123,16 @@ public class AuthentificationUI extends JFrame {
         return null;
     }
 
-    // Méthode pour lancer l'application principale pour un admin
     private void launchAdminApplication() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new la_principale_admin(); // Lancer l'application principale pour un admin
+                new la_principale_admin(); // Lancer l'application principale pour un administrateur
             }
         });
     }
 
-    // Méthode pour lancer l'application principale pour un responsable de maintenance
-    private void launchMainApplication() {
+    private void launchMaintenanceApplication() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -144,7 +141,15 @@ public class AuthentificationUI extends JFrame {
         });
     }
 
-    // Méthode principale pour tester l'authentification
+    private void launchOperatorApplication() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new PageMaintenanceOperateurUI(); // Lancer l'application principale pour un opérateur
+            }
+        });
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

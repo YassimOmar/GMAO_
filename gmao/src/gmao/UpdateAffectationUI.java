@@ -75,35 +75,7 @@ public class UpdateAffectationUI extends JFrame {
         setVisible(true);
     }
 
-   /* private void updateAffectation() {
-        String demande_id = demandeField.getText();
-        String operateur_id = operateurField.getText();
-       // String montant = montantField.getText();
-       // String classification = classificationField.getText();
-      //  String statut = (String) statutComboBox.getSelectedItem();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String date = sdf.format(new Date());
 
-        try (Connection conn = DBUtil.getConnection()) {
-            String query = "UPDATE AffectationOperateur SET demande_id=?, operateur_id=?, montant=?,  statut=?, date_affectation=? WHERE id_Devis=?";
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, Integer.parseInt(demande_id));
-            statement.setInt(2, Integer.parseInt(operateur_id));
-           // statement.setInt(3, Integer.parseInt(montant));
-            //statement.setString(4, classification);
-           // statement.setString(4, statut);
-            statement.setString(3, date);
-            statement.setInt(4, Integer.parseInt(id_AffectationOperateur));
-          
-            statement.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Modifier avec succès!", "Succès", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erreur lors de la mise à jour", "Erreur", JOptionPane.ERROR_MESSAGE);
-        }
-    }*/
     private void updateAffectation() {
         String demande_id = demandeField.getText();
         String operateur_id = operateurField.getText();
