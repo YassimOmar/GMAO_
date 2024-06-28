@@ -150,6 +150,28 @@ public class AuthentificationUI extends JFrame {
         });
     }
 
+
+    private String getOperateurName(String username) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String query = "SELECT nom FROM Utilisateur WHERE nom = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("nom");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la récupération du nom de l'opérateur",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

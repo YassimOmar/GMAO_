@@ -2,22 +2,25 @@ package gmao;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.math.BigDecimal;
-
 
 public class PageMaintenanceOperateurUI extends JFrame {
 
     private JTable table;
     private JScrollPane scrollPane;
-    private JButton saveButton;
-
+    private JButton saveButton; // Bouton Enregistrer
+    private String username; // Nom d'utilisateur
+    private String operateurNom; // Nom de l'opérateur
+    
+    
     public PageMaintenanceOperateurUI() {
         setTitle("Liste des Maintenances");
         setSize(800, 600);
@@ -28,9 +31,12 @@ public class PageMaintenanceOperateurUI extends JFrame {
         scrollPane = new JScrollPane(table);
 
         // Ajout du JScrollPane à la fenêtre
-        add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane);
 
-        // Ajout du bouton "Enregistrer" en bas de la fenêtre
+        // Charger les données depuis la base de données
+        loadMaintenancesAndDevis();
+
+        // Ajout du bouton Enregistrer
         saveButton = new JButton("Enregistrer");
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -38,10 +44,10 @@ public class PageMaintenanceOperateurUI extends JFrame {
                 saveModifications();
             }
         });
-        add(saveButton, BorderLayout.SOUTH);
 
-        // Charger les données depuis la base de données
-        loadMaintenancesAndDevis();
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(saveButton);
+        add(buttonPanel, BorderLayout.SOUTH); // Ajout du panel avec le bouton en bas de la fenêtre
 
         setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
         setVisible(true); // Rendre la fenêtre visible
@@ -49,20 +55,20 @@ public class PageMaintenanceOperateurUI extends JFrame {
 
     private void loadMaintenancesAndDevis() {
         try (Connection conn = DBUtil.getConnection()) {
-            String query = "SELECT dm.id_DemandeMaintenance, dm.description, dm.classification, dm.statut, d.id_Devis, d.montant, d.statut " +
-                    "FROM DemandeMaintenance dm " +
-                    "LEFT JOIN Devis d ON dm.id_DemandeMaintenance = d.demande_id";
+            String query = "SELECT dm.id_DemandeMaintenance, dm.description, dm.classification, dm.statut, d.id_Devis, d.montant, d.statut, u.nom as operateur_nom " +
+                           "FROM DemandeMaintenance dm " +
+                           "LEFT JOIN Devis d ON dm.id_DemandeMaintenance = d.demande_id " +
+                           "LEFT JOIN Utilisateur u ON d.operateur_id = u.id_Utilisateur";
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
 
-            // Création d'un modèle de table pour stocker les données
             DefaultTableModel model = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    // Permettre l'édition des colonnes sauf les colonnes ID
-                    return column != 0 && column != 4; // Exclure les colonnes ID
+                    return column != 0; // Allow editing all except the first column (ID Demande)
                 }
             };
+
             model.addColumn("ID Demande");
             model.addColumn("Description");
             model.addColumn("Classification");
@@ -70,10 +76,10 @@ public class PageMaintenanceOperateurUI extends JFrame {
             model.addColumn("ID Devis");
             model.addColumn("Montant");
             model.addColumn("Statut Devis");
+            model.addColumn("Opérateur");
 
-            // Remplir le modèle avec les données de la base de données
             while (resultSet.next()) {
-                Object[] row = new Object[7];
+                Object[] row = new Object[8];
                 row[0] = resultSet.getInt("id_DemandeMaintenance");
                 row[1] = resultSet.getString("description");
                 row[2] = resultSet.getString("classification");
@@ -81,11 +87,11 @@ public class PageMaintenanceOperateurUI extends JFrame {
                 row[4] = resultSet.getInt("id_Devis");
                 row[5] = resultSet.getBigDecimal("montant");
                 row[6] = resultSet.getString("statut");
+                row[7] = resultSet.getString("operateur_nom");
 
                 model.addRow(row);
             }
 
-            // Appliquer le modèle de table à notre JTable
             table.setModel(model);
 
         } catch (SQLException ex) {
@@ -104,12 +110,12 @@ public class PageMaintenanceOperateurUI extends JFrame {
 
             // Parcourir chaque ligne modifiée pour sauvegarder dans la base de données
             for (int i = 0; i < rowCount; i++) {
-                int demandeId = (int) model.getValueAt(i, 0);
+                int demandeId = (int) model.getValueAt(i, 0);  // ID Demande
                 String description = (String) model.getValueAt(i, 1);
                 String classification = (String) model.getValueAt(i, 2);
                 String statutDemande = (String) model.getValueAt(i, 3);
                 int devisId = (int) model.getValueAt(i, 4);
-                BigDecimal montant = (BigDecimal) model.getValueAt(i, 5);
+                BigDecimal montant = (BigDecimal) model.getValueAt(i, 5);  // Utilisation de BigDecimal
                 String statutDevis = (String) model.getValueAt(i, 6);
 
                 // Exemple de requête de mise à jour pour la demande de maintenance
