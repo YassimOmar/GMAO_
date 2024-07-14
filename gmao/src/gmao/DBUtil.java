@@ -1,6 +1,5 @@
 package gmao;
 
-//package util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

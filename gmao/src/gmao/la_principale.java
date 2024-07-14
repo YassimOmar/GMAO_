@@ -110,12 +110,34 @@ public class la_principale extends JFrame {
         });
         operateurMenu.add(afficherOperateurMenuItem);
         menuBar.add(operateurMenu);
+        
+        // Menu pour la déconnexion
+        JMenuItem deconnexionMenuItem = new JMenuItem("Déconnexion");
+        deconnexionMenuItem.setHorizontalAlignment(SwingConstants.CENTER);
+        deconnexionMenuItem.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 12));
+        deconnexionMenuItem.setBackground(Color.RED);
+        deconnexionMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(la_principale.this,
+                        "Êtes-vous sûr de vouloir vous déconnecter?",
+                        "Confirmation de déconnexion",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    dispose(); // Fermer la fenêtre principale
+                    new AuthentificationUI(); // Retourner à la fenêtre d'authentification
+                }
+            }
+        });
+        menuBar.add(deconnexionMenuItem);
 
+        // Ajout de la barre de menu à la fenêtre
         setJMenuBar(menuBar);
+        
 
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        add(mainPanel);
+        getContentPane().add(mainPanel);
 
         setVisible(true);
     }

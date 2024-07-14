@@ -20,7 +20,7 @@ public class UpdateAffectationUI extends JFrame {
     //private String id_Devis;
 	private String id_AffectationOperateur;
 
-    public UpdateAffectationUI(String id_AffectationOperateur, String demande_id, String operateur_id, /*String montant,*/ String statut) {
+    public UpdateAffectationUI(String id_AffectationOperateur, String demande_id, String operateur_id, String statut) {
         this.id_AffectationOperateur = id_AffectationOperateur;
 
         setTitle("Modifier Affectation");
@@ -40,14 +40,7 @@ public class UpdateAffectationUI extends JFrame {
         JLabel operateurLabel = new JLabel("operateur ID:");
         operateurField = new JTextField(operateur_id);
 
-        //JLabel classificationLabel = new JLabel("Classification:");
-        //classificationField = new JTextField(classification);
-
-      /*  JLabel statutLabel = new JLabel("Statut:");
-        String[] statutOptions = {"créé", "modifié", "validé"};
-        statutComboBox = new JComboBox<>(statutOptions);
-        statutComboBox.setSelectedItem(statut);*/
-
+    
         JButton updateButton = new JButton("Mettre à jour");
         updateButton.addActionListener(new ActionListener() {
             @Override
@@ -62,12 +55,7 @@ public class UpdateAffectationUI extends JFrame {
         panel.add(demandeField);
         panel.add(operateurLabel);
         panel.add(operateurField);
-        //panel.add(montantLabel);
-      //  panel.add(montantField);
-       // panel.add(classificationLabel);
-       // panel.add(classificationField);
-    //    panel.add(statutLabel);
-     //   panel.add(statutComboBox);
+ 
         panel.add(updateButton);
 
         // Ajout du panel à la fenêtre
@@ -79,7 +67,7 @@ public class UpdateAffectationUI extends JFrame {
     private void updateAffectation() {
         String demande_id = demandeField.getText();
         String operateur_id = operateurField.getText();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy"); // Assurez-vous que le format de la date correspond à celui utilisé dans votre base de données
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String date = sdf.format(new Date());
 
         try (Connection conn = DBUtil.getConnection()) {

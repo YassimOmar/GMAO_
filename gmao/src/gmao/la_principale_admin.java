@@ -68,13 +68,33 @@ public class la_principale_admin extends JFrame {
         responsableMenu.add(afficherResponsablesMenuItem);
         menuBar.add(responsableMenu);
 
+     // Menu pour la déconnexion
+        JMenuItem deconnexionMenuItem = new JMenuItem("Déconnexion");
+        deconnexionMenuItem.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 12));
+        deconnexionMenuItem.setBackground(Color.RED);
+        deconnexionMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(la_principale_admin.this,
+                        "Êtes-vous sûr de vouloir vous déconnecter?",
+                        "Confirmation de déconnexion",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    dispose(); // Fermer la fenêtre principale
+                    new AuthentificationUI(); // Retourner à la fenêtre d'authentification
+                }
+            }
+        });
+        menuBar.add(deconnexionMenuItem);
+
         // Ajout de la barre de menu à la fenêtre
         setJMenuBar(menuBar);
+        
 
         // Panel principal pour contenir les différentes vues
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        add(mainPanel);
+        getContentPane().add(mainPanel);
 
         // Rendre la fenêtre principale visible
         setVisible(true);
@@ -301,6 +321,8 @@ public class la_principale_admin extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+
 
 
     // Méthode principale pour lancer l'application

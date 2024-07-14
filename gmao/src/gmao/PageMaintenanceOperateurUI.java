@@ -26,12 +26,38 @@ public class PageMaintenanceOperateurUI extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        //creation de barre de menu 
+        JMenuBar menuBar = new JMenuBar();
+        
+     // Menu pour la déconnexion
+        JMenuItem deconnexionMenuItem = new JMenuItem("Déconnexion");
+        deconnexionMenuItem.setHorizontalAlignment(SwingConstants.CENTER);
+        deconnexionMenuItem.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 12));
+        deconnexionMenuItem.setBackground(Color.RED);
+        deconnexionMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(PageMaintenanceOperateurUI.this,
+                        "Êtes-vous sûr de vouloir vous déconnecter?",
+                        "Confirmation de déconnexion",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    dispose(); // Fermer la fenêtre principale
+                    new AuthentificationUI(); // Retourner à la fenêtre d'authentification
+                }
+            }
+        });
+        menuBar.add(deconnexionMenuItem);
+        // Ajout de la barre de menu à la fenêtre
+        setJMenuBar(menuBar);
+        
+        
         // Création d'un tableau vide avec un modèle par défaut
         table = new JTable();
         scrollPane = new JScrollPane(table);
 
         // Ajout du JScrollPane à la fenêtre
-        add(scrollPane);
+        getContentPane().add(scrollPane);
 
         // Charger les données depuis la base de données
         loadMaintenancesAndDevis();
@@ -47,7 +73,7 @@ public class PageMaintenanceOperateurUI extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(saveButton);
-        add(buttonPanel, BorderLayout.SOUTH); // Ajout du panel avec le bouton en bas de la fenêtre
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH); // Ajout du panel avec le bouton en bas de la fenêtre
 
         setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
         setVisible(true); // Rendre la fenêtre visible
@@ -65,7 +91,7 @@ public class PageMaintenanceOperateurUI extends JFrame {
             DefaultTableModel model = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return column != 0; // Allow editing all except the first column (ID Demande)
+                    return column != 0; // permettre toute modification sauf l'ID
                 }
             };
 

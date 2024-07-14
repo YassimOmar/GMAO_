@@ -30,9 +30,9 @@ public class NouveauDevisUI extends JFrame {
         panel.setLayout(new GridLayout(6, 2)); // Disposition des composants en grille
 
         // Champs de texte et étiquettes pour saisir les informations du devis
-        JLabel demandeIdLabel = new JLabel("ID du devis:");
+        JLabel devisIdLabel = new JLabel("ID du devis:");
         devisIdField = new JTextField();
-        JLabel devisIdLabel = new JLabel("ID de la Demande:");
+        JLabel demandeIdLabel = new JLabel("ID de la Demande:");
         demandeIdField = new JTextField();
         JLabel operateurIdLabel = new JLabel("ID de l'Opérateur:");
         operateurIdField = new JTextField();
